@@ -1,10 +1,8 @@
 // App.jsx
 import React from 'react';
 import GlassNavbar from './Navbar';
-import HomePage from './Home';
+// import HomePage from './Home';
 import About from './About';
-import Services from './Services';
-import Contact from './Contact';
 import { Home, User, Briefcase, Mail, Settings, Star } from 'lucide-react';
 import StackItUI from './Home2';
 
