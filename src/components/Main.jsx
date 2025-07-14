@@ -1,7 +1,7 @@
 // App.jsx
 import React from 'react';
 import GlassNavbar from './Navbar';
-// import HomePage from './Home';
+import HomePage from './Home';
 import About from './About';
 import { Home, User, Briefcase, Mail, Settings, Star } from 'lucide-react';
 import StackItUI from './Home2';
@@ -63,7 +63,7 @@ const Main = () => {
 
          {/* Main Content */}
          <div className="pt-16">
-            {/* <HomePage /> */}
+            <HomePage />
             <StackItUI/>
             <About />
          </div>
