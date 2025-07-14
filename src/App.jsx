@@ -7,6 +7,7 @@ import Main from "../src/components/Main"
 import Home2 from './components/Home2';
 import QuestionDetail from './components/QuestionDetail';
 import AskNewQuestion from './components/AskNewQuestion';
+import BrowseTopicsPage from './components/BrowseTopics';
 
 function App() {
 
@@ -20,7 +21,7 @@ function App() {
       <Route path="/question/:questionId" element={<QuestionDetail />} />
       <Route path='/ask-new-question' element={<AskNewQuestion />} />
       <Route path="/" element={<Main />} />
-      {/* <Route path="/" element={<Main />} /> */}
+      <Route path="/BrowseTopics" element={<BrowseTopicsPage/>}/>
     </Routes>
 
 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Search, BookOpen, Star, MessageCircle, TrendingUp, ArrowRight, Sparkles, Users, CheckCircle, HelpCircle } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const ModernQAHomePage = () => {
    const [isLoaded, setIsLoaded] = useState(false);
@@ -208,19 +209,24 @@ const ModernQAHomePage = () => {
                         className={`flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-8 transition-all duration-1000 delay-600 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
                            }`}
                      >
+
                         <button className="group relative px-6 py-3 bg-gradient-to-r from-violet-500 to-cyan-500 rounded-2xl text-white font-bold text-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-cyan-500/25">
                            <div className="absolute inset-0 bg-gradient-to-r from-violet-600 to-cyan-600 rounded-2xl blur opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                           <div className="relative flex items-center gap-2">
-                              <Search size={20} />
-                              Ask Question
-                           </div>
+                           <Link to="ask-new-question">
+                              <div className="relative flex items-center gap-2">
+                                 <Search size={20} />
+                                 Ask Question
+                              </div>
+                           </Link>
                         </button>
 
                         <button className="group px-6 py-3 bg-white/5 backdrop-blur-xl rounded-2xl text-white font-bold text-lg border border-white/20 hover:border-white/40 transition-all duration-300 hover:scale-105 hover:bg-white/10">
-                           <div className="flex items-center gap-2">
-                              <BookOpen size={20} />
-                              Browse Topics
-                           </div>
+                           <Link to="BrowseTopics">
+                              <div className="flex items-center gap-2">
+                                 <BookOpen size={20} />
+                                 Browse Topics
+                              </div>
+                           </Link>
                         </button>
                      </div>
 

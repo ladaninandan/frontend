@@ -9,41 +9,7 @@ import StackItUI from './Home2';
 const Main = () => {
    // Custom navigation items
    const customNavItems = [
-      {
-         name: 'Home',
-         icon: Home,
-         href: '#home',
-         onClick: () => console.log('Home clicked')
-      },
-      {
-         name: 'About',
-         icon: User,
-         href: '#about',
-         onClick: () => console.log('About clicked')
-      },
-      {
-         name: 'Services',
-         icon: Briefcase,
-         href: '#services',
-         dropdown: [
-            { name: 'Web Design', onClick: () => console.log('Web Design clicked') },
-            { name: 'Development', onClick: () => console.log('Development clicked') },
-            { name: 'Consulting', onClick: () => console.log('Consulting clicked') },
-            { name: 'Support', onClick: () => console.log('Support clicked') }
-         ]
-      },
-      {
-         name: 'Contact',
-         icon: Mail,
-         href: '#contact',
-         onClick: () => console.log('Contact clicked')
-      },
-      {
-         name: 'Reviews',
-         icon: Star,
-         href: '#reviews',
-         onClick: () => console.log('Reviews clicked')
-      }
+
    ];
 
    const handleCtaClick = () => {

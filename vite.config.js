@@ -5,6 +5,9 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   server: {
-    allowedHosts: ['8ee2a1760b26.ngrok-free.app']
+    proxy: {
+      '/ api':' https://backend-usvi.onrender.com'
+    }
   }
 })
+

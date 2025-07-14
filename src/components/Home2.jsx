@@ -1,159 +1,159 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Search, ChevronDown, ChevronLeft, ChevronRight,
-  Plus, Eye, MessageCircle, ThumbsUp, Clock, User, Filter
+   Search, ChevronDown, ChevronLeft, ChevronRight,
+   Plus, Eye, MessageCircle, ThumbsUp, Clock, User, Filter
 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { isUserLoggedIn } from '../utils/check.js';
 
+
 export default function StackItUI() {
-  const [selectedFilter, setSelectedFilter] = useState('Newest Answered');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
-  const [questions, setQuestions] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [showFilterDropdown, setShowFilterDropdown] = useState(false);
-  const [animatedQuestions, setAnimatedQuestions] = useState([]);
-  const [itemsPerPage] = useState(10);
-  
-  // Notifications state (removed - now handled in navbar)
-  const [activeTab, setActiveTab] = useState('questions');
+   const [selectedFilter, setSelectedFilter] = useState('Newest Answered');
+   const [searchQuery, setSearchQuery] = useState('');
+   const [currentPage, setCurrentPage] = useState(1);
+   const [questions, setQuestions] = useState([]);
+   const [loading, setLoading] = useState(true);
+   const [error, setError] = useState(null);
+   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
+   const [animatedQuestions, setAnimatedQuestions] = useState([]);
+   const [itemsPerPage] = useState(10);
 
-  const navigate = useNavigate();
-  const API_URL = import.meta.env.VITE_API_URL;
+   // Notifications state (removed - now handled in navbar)
+   const [activeTab, setActiveTab] = useState('questions');
 
-  // Fetch Questions
-  useEffect(() => {
-    const fetchQuestions = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch(`${API_URL}/questions?page=1&limit=100`, {
-          method: 'GET',
-          headers: {
-            'ngrok-skip-browser-warning': 'true',
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          },
-          mode: 'cors'
-        });
+   const navigate = useNavigate();
+   const API_URL = import.meta.env.VITE_API_URL;
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
+   // Fetch Questions
+   useEffect(() => {
+      const fetchQuestions = async () => {
+         try {
+            setLoading(true);
+            const response = await fetch(`${API_URL}/questions?page=1&limit=100`, {
+               method: 'GET',
+               headers: {
+                  'Content-Type': 'application/json',
+                  'Accept': 'application/json'
+               },
+               mode: 'cors'
+            });
 
-        const data = await response.json();
-        setQuestions(Array.isArray(data.questions) ? data.questions : []);
-        setError(null);
-      } catch (err) {
-        setError(err.message || 'Failed to fetch questions');
-        console.error('Error fetching questions:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
+            if (!response.ok) {
+               throw new Error(`HTTP error! status: ${response.status}`);
+            }
 
-    fetchQuestions();
-  }, []);
+            const data = await response.json();
+            setQuestions(Array.isArray(data.questions) ? data.questions : []);
+            setError(null);
+         } catch (err) {
+            setError(err.message || 'Failed to fetch questions');
+            console.error('Error fetching questions:', err);
+         } finally {
+            setLoading(false);
+         }
+      };
 
-  // Handle filter change
-  const handleFilterChange = (filter) => {
-    setSelectedFilter(filter);
-    setShowFilterDropdown(false);
-    setAnimatedQuestions([]);
-  };
+      fetchQuestions();
+   }, []);
 
-  // Filter dropdown options
-  const filterOptions = [
-    'Newest Answered',
-    'Newest Unanswered',
-    'Most Answers'
-  ];
-
-  // Filter + sort
-  const filteredQuestions = questions
-    .filter(q =>
-      q.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      q.description?.toLowerCase().includes(searchQuery.toLowerCase())
-    )
-    .sort((a, b) => {
-      switch (selectedFilter) {
-        case 'Newest Answered': {
-          const aHasAnswers = (a.answerCount || 0) > 0;
-          const bHasAnswers = (b.answerCount || 0) > 0;
-          if (aHasAnswers && !bHasAnswers) return -1;
-          if (!aHasAnswers && bHasAnswers) return 1;
-          return new Date(b.createdAt) - new Date(a.createdAt);
-        }
-        case 'Newest Unanswered': {
-          const aNoAnswers = (a.answerCount || 0) === 0;
-          const bNoAnswers = (b.answerCount || 0) === 0;
-          if (aNoAnswers && !bNoAnswers) return -1;
-          if (!aNoAnswers && bNoAnswers) return 1;
-          return new Date(b.createdAt) - new Date(a.createdAt);
-        }
-        case 'Most Answers': {
-          const aAnswers = a.answerCount || 0;
-          const bAnswers = b.answerCount || 0;
-          return bAnswers - aAnswers;
-        }
-        default:
-          return new Date(b.createdAt) - new Date(a.createdAt);
-      }
-    });
-
-  // Pagination calculations
-  const totalPages = Math.ceil(filteredQuestions.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const paginatedQuestions = filteredQuestions.slice(startIndex, endIndex);
-
-  // Animate on questions change
-  useEffect(() => {
-    if (paginatedQuestions.length > 0) {
+   // Handle filter change
+   const handleFilterChange = (filter) => {
+      setSelectedFilter(filter);
+      setShowFilterDropdown(false);
       setAnimatedQuestions([]);
-      paginatedQuestions.forEach((_, index) => {
-        setTimeout(() => {
-          setAnimatedQuestions(prev => [...prev, index]);
-        }, index * 100);
+   };
+
+   // Filter dropdown options
+   const filterOptions = [
+      'Newest Answered',
+      'Newest Unanswered',
+      'Most Answers'
+   ];
+
+   // Filter + sort
+   const filteredQuestions = questions
+      .filter(q =>
+         q.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+         q.description?.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+      .sort((a, b) => {
+         switch (selectedFilter) {
+            case 'Newest Answered': {
+               const aHasAnswers = (a.answerCount || 0) > 0;
+               const bHasAnswers = (b.answerCount || 0) > 0;
+               if (aHasAnswers && !bHasAnswers) return -1;
+               if (!aHasAnswers && bHasAnswers) return 1;
+               return new Date(b.createdAt) - new Date(a.createdAt);
+            }
+            case 'Newest Unanswered': {
+               const aNoAnswers = (a.answerCount || 0) === 0;
+               const bNoAnswers = (b.answerCount || 0) === 0;
+               if (aNoAnswers && !bNoAnswers) return -1;
+               if (!aNoAnswers && bNoAnswers) return 1;
+               return new Date(b.createdAt) - new Date(a.createdAt);
+            }
+            case 'Most Answers': {
+               const aAnswers = a.answerCount || 0;
+               const bAnswers = b.answerCount || 0;
+               return bAnswers - aAnswers;
+            }
+            default:
+               return new Date(b.createdAt) - new Date(a.createdAt);
+         }
       });
-    }
-  }, [paginatedQuestions.length, selectedFilter, searchQuery, currentPage]);
 
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [searchQuery, selectedFilter]);
+   // Pagination calculations
+   const totalPages = Math.ceil(filteredQuestions.length / itemsPerPage);
+   const startIndex = (currentPage - 1) * itemsPerPage;
+   const endIndex = startIndex + itemsPerPage;
+   const paginatedQuestions = filteredQuestions.slice(startIndex, endIndex);
 
-  const getPageNumbers = () => {
-    const pages = [];
-    const maxVisiblePages = 5;
-    if (totalPages <= maxVisiblePages) {
-      for (let i = 1; i <= totalPages; i++) pages.push(i);
-    } else {
-      if (currentPage <= 3) {
-        for (let i = 1; i <= 5; i++) pages.push(i);
-      } else if (currentPage >= totalPages - 2) {
-        for (let i = totalPages - 4; i <= totalPages; i++) pages.push(i);
-      } else {
-        for (let i = currentPage - 2; i <= currentPage + 2; i++) pages.push(i);
+   // Animate on questions change
+   useEffect(() => {
+      if (paginatedQuestions.length > 0) {
+         setAnimatedQuestions([]);
+         paginatedQuestions.forEach((_, index) => {
+            setTimeout(() => {
+               setAnimatedQuestions(prev => [...prev, index]);
+            }, index * 100);
+         });
       }
-    }
-    return pages;
-  };
+   }, [paginatedQuestions.length, selectedFilter, searchQuery, currentPage]);
 
-  const pageNumbers = getPageNumbers();
+   useEffect(() => {
+      setCurrentPage(1);
+   }, [searchQuery, selectedFilter]);
 
-  const handleAskQuestionClick = () => {
-    if (isUserLoggedIn()) navigate('/ask-new-question');
-    else navigate('/login');
-  };
+   const getPageNumbers = () => {
+      const pages = [];
+      const maxVisiblePages = 5;
+      if (totalPages <= maxVisiblePages) {
+         for (let i = 1; i <= totalPages; i++) pages.push(i);
+      } else {
+         if (currentPage <= 3) {
+            for (let i = 1; i <= 5; i++) pages.push(i);
+         } else if (currentPage >= totalPages - 2) {
+            for (let i = totalPages - 4; i <= totalPages; i++) pages.push(i);
+         } else {
+            for (let i = currentPage - 2; i <= currentPage + 2; i++) pages.push(i);
+         }
+      }
+      return pages;
+   };
 
-  const handleQuestionClick = (question) => {
-    navigate(`/question/${question._id}`);
-  };
+   const pageNumbers = getPageNumbers();
+
+   const handleAskQuestionClick = () => {
+      if (isUserLoggedIn()) navigate('/ask-new-question');
+      else navigate('/login');
+   };
+
+   const handleQuestionClick = (question) => {
+      navigate(`/question/${question._id}`);
+   };
 
    return (
-      <div className="min-h-screen relative overflow-hidden top-4"  style={{
+      <div className="min-h-screen relative overflow-hidden top-4" style={{
          background: 'linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 25%, #16213e 50%, #0f3460 75%, #1a1a2e 100%)'
       }}>
          {/* Animated Background Elements */}
@@ -187,10 +187,11 @@ export default function StackItUI() {
                   {/* Controls Bar */}
                   <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 sm:mb-8 space-y-4 sm:space-y-0">
                      <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-3 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
-                        <button 
+                        <button
                            onClick={handleAskQuestionClick}
                            className="group relative overflow-hidden bg-gradient-to-r from-blue-500 to-purple-600 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl font-medium hover:from-blue-600 hover:to-purple-700 transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-blue-500/25 w-full sm:w-auto text-sm sm:text-base"
                         >
+                          
                            <div className="flex items-center justify-center space-x-2">
                               <Plus className="w-4 h-4 group-hover:rotate-90 transition-transform duration-300" />
                               <span>Ask New Question</span>
@@ -280,82 +281,81 @@ export default function StackItUI() {
                               <div className="text-xs sm:text-sm text-gray-400 mb-4">
                                  Showing {startIndex + 1}-{Math.min(endIndex, filteredQuestions.length)} of {filteredQuestions.length} questions
                               </div>
-                              
-                              {paginatedQuestions.map((question, index) => (
-                              <div
-                                 key={question._id || question.id}
-                                 className={`group bg-white/5 backdrop-blur-lg border border-white/10 rounded-xl p-4 sm:p-6 hover:bg-white/10 hover:border-white/20 transition-all duration-500 cursor-pointer hover:scale-[1.02] ${animatedQuestions.includes(index) ? 'animate-in fade-in slide-in-from-bottom-4' : 'opacity-0'
-                                    }`}
-                                 onClick={() => handleQuestionClick(question)}
-                                 style={{ animationDelay: `${index * 100}ms` }}
-                              >
-                                 <div className="flex flex-col sm:flex-row items-start justify-between space-y-4 sm:space-y-0">
-                                    <div className="flex-1 w-full sm:w-auto">
-                                       <h3 className="text-lg sm:text-xl font-semibold mb-3 group-hover:text-blue-400 transition-colors duration-300 line-clamp-2">
-                                          {question.title || 'Untitled Question'}
-                                       </h3>
-                                       <div
-                                          className="text-gray-300 mb-4 line-clamp-2 leading-relaxed text-sm sm:text-base"
-                                          dangerouslySetInnerHTML={{ __html: question.description || question.body || 'No description available' }}
-                                       ></div>
 
-                                       {/* Tags */}
-                                       <div className="flex flex-wrap gap-2 mb-4">
-                                          {question.tags && question.tags.length > 0 ? (
-                                             question.tags.map((tag, tagIndex) => (
-                                                <span
-                                                   key={tagIndex}
-                                                   className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 backdrop-blur-lg border border-white/10 text-xs px-2 sm:px-3 py-1 rounded-full hover:from-blue-500/30 hover:to-purple-500/30 transition-all duration-300"
-                                                >
-                                                   {tag}
+                              {paginatedQuestions.map((question, index) => (
+                                 <div
+                                    key={question._id || question.id}
+                                    className={`group bg-white/5 backdrop-blur-lg border border-white/10 rounded-xl p-4 sm:p-6 hover:bg-white/10 hover:border-white/20 transition-all duration-500 cursor-pointer hover:scale-[1.02] ${animatedQuestions.includes(index) ? 'animate-in fade-in slide-in-from-bottom-4' : 'opacity-0'
+                                       }`}
+                                    onClick={() => handleQuestionClick(question)}
+                                    style={{ animationDelay: `${index * 100}ms` }}
+                                 >
+                                    <div className="flex flex-col sm:flex-row items-start justify-between space-y-4 sm:space-y-0">
+                                       <div className="flex-1 w-full sm:w-auto">
+                                          <h3 className="text-lg sm:text-xl font-semibold mb-3 group-hover:text-blue-400 transition-colors duration-300 line-clamp-2">
+                                             {question.title || 'Untitled Question'}
+                                          </h3>
+                                          <div
+                                             className="text-gray-300 mb-4 line-clamp-2 leading-relaxed text-sm sm:text-base"
+                                             dangerouslySetInnerHTML={{ __html: question.description || question.body || 'No description available' }}
+                                          ></div>
+
+                                          {/* Tags */}
+                                          <div className="flex flex-wrap gap-2 mb-4">
+                                             {question.tags && question.tags.length > 0 ? (
+                                                question.tags.map((tag, tagIndex) => (
+                                                   <span
+                                                      key={tagIndex}
+                                                      className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 backdrop-blur-lg border border-white/10 text-xs px-2 sm:px-3 py-1 rounded-full hover:from-blue-500/30 hover:to-purple-500/30 transition-all duration-300"
+                                                   >
+                                                      {tag}
+                                                   </span>
+                                                ))
+                                             ) : (
+                                                <span className="bg-gradient-to-r from-gray-500/20 to-gray-600/20 backdrop-blur-lg border border-white/10 text-xs px-2 sm:px-3 py-1 rounded-full">
+                                                   No tags
                                                 </span>
-                                             ))
-                                          ) : (
-                                             <span className="bg-gradient-to-r from-gray-500/20 to-gray-600/20 backdrop-blur-lg border border-white/10 text-xs px-2 sm:px-3 py-1 rounded-full">
-                                                No tags
-                                             </span>
-                                          )}
+                                             )}
+                                          </div>
+
+                                          {/* Question Meta */}
+                                          <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-6 text-xs sm:text-sm text-gray-400">
+                                             <div className="flex items-center space-x-1">
+                                                <User className="w-3 h-3 sm:w-4 sm:h-4" />
+                                                <span className="truncate max-w-32 sm:max-w-none">{question.userId?.username || question.username || question.author || 'Anonymous'}</span>
+                                             </div>
+                                             <div className="flex items-center space-x-1">
+                                                <Clock className="w-3 h-3 sm:w-4 sm:h-4" />
+                                                <span>{new Date(question.createdAt).toLocaleDateString()}</span>
+                                             </div>
+                                             {question.viewCount && (
+                                                <div className="flex items-center space-x-1">
+                                                   <Eye className="w-3 h-3 sm:w-4 sm:h-4" />
+                                                   <span>{question.viewCount} views</span>
+                                                </div>
+                                             )}
+                                          </div>
                                        </div>
 
-                                       {/* Question Meta */}
-                                       <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-6 text-xs sm:text-sm text-gray-400">
-                                          <div className="flex items-center space-x-1">
-                                             <User className="w-3 h-3 sm:w-4 sm:h-4" />
-                                             <span className="truncate max-w-32 sm:max-w-none">{question.userId?.username || question.username || question.author || 'Anonymous'}</span>
-                                          </div>
-                                          <div className="flex items-center space-x-1">
-                                             <Clock className="w-3 h-3 sm:w-4 sm:h-4" />
-                                             <span>{new Date(question.createdAt).toLocaleDateString()}</span>
-                                          </div>
-                                          {question.viewCount && (
-                                             <div className="flex items-center space-x-1">
-                                                <Eye className="w-3 h-3 sm:w-4 sm:h-4" />
-                                                <span>{question.viewCount} views</span>
+                                       {/* Question Stats */}
+                                       <div className="flex sm:flex-col items-center sm:items-center space-x-3 sm:space-x-0 sm:space-y-3 sm:ml-6">
+                                          {question.votes !== undefined && (
+                                             <div className="bg-gradient-to-r from-green-500/20 to-emerald-500/20 backdrop-blur-lg border border-white/10 text-white text-xs sm:text-sm px-3 sm:px-4 py-1 sm:py-2 rounded-xl flex items-center space-x-1 sm:space-x-2">
+                                                <ThumbsUp className="w-3 h-3 sm:w-4 sm:h-4" />
+                                                <span>{question.votes}</span>
                                              </div>
                                           )}
-                                       </div>
-                                    </div>
-
-                                    {/* Question Stats */}
-                                    <div className="flex sm:flex-col items-center sm:items-center space-x-3 sm:space-x-0 sm:space-y-3 sm:ml-6">
-                                       {question.votes !== undefined && (
-                                          <div className="bg-gradient-to-r from-green-500/20 to-emerald-500/20 backdrop-blur-lg border border-white/10 text-white text-xs sm:text-sm px-3 sm:px-4 py-1 sm:py-2 rounded-xl flex items-center space-x-1 sm:space-x-2">
-                                             <ThumbsUp className="w-3 h-3 sm:w-4 sm:h-4" />
-                                             <span>{question.votes}</span>
+                                          <div className={`backdrop-blur-lg border border-white/10 text-white text-xs sm:text-sm px-3 sm:px-4 py-1 sm:py-2 rounded-xl flex items-center space-x-1 sm:space-x-2 ${(question.answerCount || 0) > 0
+                                                ? 'bg-gradient-to-r from-blue-500/20 to-cyan-500/20'
+                                                : 'bg-gradient-to-r from-gray-500/20 to-gray-600/20'
+                                             }`}>
+                                             <MessageCircle className="w-3 h-3 sm:w-4 sm:h-4" />
+                                             <span>{question.answerCount || 0}</span>
                                           </div>
-                                       )}
-                                       <div className={`backdrop-blur-lg border border-white/10 text-white text-xs sm:text-sm px-3 sm:px-4 py-1 sm:py-2 rounded-xl flex items-center space-x-1 sm:space-x-2 ${
-                                          (question.answerCount || 0) > 0 
-                                             ? 'bg-gradient-to-r from-blue-500/20 to-cyan-500/20' 
-                                             : 'bg-gradient-to-r from-gray-500/20 to-gray-600/20'
-                                       }`}>
-                                          <MessageCircle className="w-3 h-3 sm:w-4 sm:h-4" />
-                                          <span>{question.answerCount || 0}</span>
                                        </div>
                                     </div>
                                  </div>
-                              </div>
-                           ))}
+                              ))}
                            </>
                         )}
                      </div>

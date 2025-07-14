@@ -22,7 +22,7 @@ export default function QuestionDetail() {
    const { questionId } = useParams();
    const [refreshAnswers, setRefreshAnswers] = useState(false);
 
-   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+   const API_URL = import.meta.env.VITE_API_URL;
 
    // TipTap editor configuration
    const editor = useEditor({
